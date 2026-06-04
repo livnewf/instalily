@@ -26,8 +26,7 @@ export default function ChatPanel() {
     () => [
       {
         role: 'assistant',
-        text:
-          'Hello! I’m your PartSelect assistant for refrigerator and dishwasher parts. Ask me about compatible replacement parts, order support, or product recommendations.',
+        text: 'Hello! I\'m your PartSelect assistant for refrigerator and dishwasher parts. Ask me about compatible replacement parts, installation help, repair guidance, or order support.',
       },
     ],
     []
@@ -40,15 +39,22 @@ export default function ChatPanel() {
   async function submitMessage(messageText: string) {
     if (!messageText.trim()) return;
     const userMessage: ChatMessage = { role: 'user', text: messageText };
-    setMessages((current) => [...current, userMessage]);
+    const currentMessages = [...messages, userMessage];
+    setMessages(currentMessages);
     setInput('');
     setLoading(true);
+
+    // Send the last 6 messages as history (excluding the current user message)
+    const history = messages
+      .filter((m) => m.role === 'user' || m.role === 'assistant')
+      .slice(-6)
+      .map((m) => ({ role: m.role, text: m.text }));
 
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: messageText }),
+        body: JSON.stringify({ query: messageText, history }),
       });
 
       const data = await response.json();
@@ -76,6 +82,13 @@ export default function ChatPanel() {
     submitMessage(input);
   }
 
+  function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      submitMessage(input);
+    }
+  }
+
   return (
     <div className="chat-shell">
       <div className="chat-window">
@@ -94,6 +107,11 @@ export default function ChatPanel() {
               </div>
             </div>
           ))}
+          {loading && (
+            <div className="message-row assistant">
+              <div className="bubble assistant">Thinking…</div>
+            </div>
+          )}
         </div>
 
         <div className="composer">
@@ -115,6 +133,7 @@ export default function ChatPanel() {
               placeholder="Ask about refrigerator or dishwasher parts..."
               value={input}
               onChange={(event) => setInput(event.target.value)}
+              onKeyDown={handleKeyDown}
             />
             <button type="submit" disabled={loading || !input.trim()}>
               {loading ? 'Thinking...' : 'Send message'}

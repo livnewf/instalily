@@ -30,7 +30,8 @@ def startup_event():
 @app.post('/chat', response_model=ChatResponse)
 def chat(request: ChatRequest):
     try:
-        result = agent.generate_response(request.query)
+        history = [h.model_dump() for h in request.history] if request.history else None
+        result = agent.generate_response(request.query, history=history)
         return result
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))

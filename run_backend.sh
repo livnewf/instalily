@@ -14,6 +14,7 @@ if [ -d ".venv" ] && [ -f ".venv/bin/activate" ]; then
 fi
 
 export LOCAL_MODEL="${LOCAL_MODEL:-Qwen/Qwen-7B-Chat}"
+export ANTHROPIC_API_KEY="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"
 export PYTHON_BACKEND_URL="${PYTHON_BACKEND_URL:-http://127.0.0.1:8000/chat}"
 
 echo "Starting backend on http://127.0.0.1:8000"

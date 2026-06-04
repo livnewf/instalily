@@ -1,8 +1,13 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
+
+class HistoryMessage(BaseModel):
+    role: str
+    text: str
 
 class ChatRequest(BaseModel):
     query: str
+    history: Optional[List[HistoryMessage]] = None
 
 class ProductSearchRequest(BaseModel):
     query: str
