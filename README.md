@@ -1,6 +1,6 @@
 # PartSelect Chat Agent
 
-A full-stack chat agent for PartSelect's e-commerce platform, scoped to refrigerator and dishwasher replacement parts. The agent answers product questions, guides installation and repair, surfaces matching parts as product cards, and routes order inquiries — all within a branded Next.js interface backed by a Python RAG pipeline powered by Claude.
+A full-stack chat agent for PartSelect's e-commerce platform, scoped to refrigerator and dishwasher replacement parts. The agent answers product questions, guides installation and repair, surfaces matching parts as product cards, and routes order inquiries — all within a branded Next.js interface backed by a Python RAG pipeline powered by Claude. This system was built using Claude Code.
 
 ---
 
@@ -42,6 +42,8 @@ FastAPI Backend (app.py)
     │
     └── LLM: Anthropic Claude Haiku (llm_client.py)
 ```
+<img width="943" height="473" alt="Screenshot 2026-06-05 at 9 40 41 AM" src="https://github.com/user-attachments/assets/a31d6fe0-91af-41ad-b061-750a168ec01f" />
+
 
 ### Frontend — Next.js (App Router)
 - `app/page.tsx` — branded shell with PartSelect header, hero section, and `<ChatPanel />`
@@ -67,6 +69,7 @@ All data sourced from [zehuiwu/partselect-agent](https://github.com/zehuiwu/part
 | `backend/data/partselect_blogs.csv` | Blog article titles and URLs | ~215 |
 
 The vector store is built on first run and persisted to `backend/chroma_db/`.
+<img width="945" height="470" alt="Screenshot 2026-06-05 at 9 41 05 AM" src="https://github.com/user-attachments/assets/801c5f46-ea27-4d84-a08a-983e889e3d3c" />
 
 ---
 
