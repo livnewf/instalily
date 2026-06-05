@@ -1,6 +1,6 @@
 # PartSelect Chat Agent
 
-A full-stack chat agent for PartSelect's e-commerce platform, scoped to refrigerator and dishwasher replacement parts. The agent answers product questions, guides installation and repair, surfaces matching parts as product cards, and routes order inquiries — all within a branded Next.js interface backed by a Python RAG pipeline powered by Claude.
+A full-stack chat agent for PartSelect's e-commerce platform, scoped to refrigerator and dishwasher replacement parts. The agent answers product questions, guides installation and repair, surfaces matching parts as product cards, and routes order inquiries — all within a branded Next.js interface backed by a Python RAG pipeline powered by Claude. This system was built using Claude Code.
 
 ---
 
