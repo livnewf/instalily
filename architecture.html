@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PartSelect Chat Agent — Architecture</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 48px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  header { margin-bottom: 36px; }
+  header h1 { font-size: 26px; font-weight: 700; color: #0055b3; letter-spacing: -.3px; }
+  header p { font-size: 14px; color: #64748b; margin-top: 5px; }
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.07), 0 6px 24px rgba(0,0,0,.05);
+    padding: 28px 32px;
+    margin-bottom: 28px;
+  }
+  .card-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    margin-bottom: 20px;
+  }
+  svg { width: 100%; height: auto; display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>PartSelect Chat Agent</h1>
+  <p>System Architecture &amp; Data Pipeline — Design Overview</p>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════
+     DIAGRAM 1 — SYSTEM ARCHITECTURE
+     ═══════════════════════════════════════════════════════════ -->
+<div class="card">
+  <div class="card-title">System Architecture — Request &amp; Response Flow</div>
+  <svg viewBox="0 0 980 432" xmlns="http://www.w3.org/2000/svg"
+       font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+    <defs>
+      <marker id="a-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+        <path d="M0 0L10 5L0 10z" fill="#94a3b8"/>
+      </marker>
+      <marker id="a-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+        <path d="M0 0L10 5L0 10z" fill="#2563eb"/>
+      </marker>
+      <marker id="a-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+        <path d="M0 0L10 5L0 10z" fill="#ea580c"/>
+      </marker>
+    </defs>
+
+    <!-- ── Layer bands ── -->
+    <rect x="8"   y="8" width="294" height="416" rx="12" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
+    <text x="155" y="30" text-anchor="middle" font-size="10" font-weight="700" fill="#1d4ed8" letter-spacing=".08em">FRONTEND — Next.js</text>
+
+    <rect x="314" y="8" width="424" height="416" rx="12" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/>
+    <text x="526" y="30" text-anchor="middle" font-size="10" font-weight="700" fill="#15803d" letter-spacing=".08em">BACKEND — Python / FastAPI</text>
+
+    <rect x="750" y="8" width="222" height="416" rx="12" fill="#fffbeb" stroke="#fde68a" stroke-width="1.5"/>
+    <text x="861" y="30" text-anchor="middle" font-size="10" font-weight="700" fill="#b45309" letter-spacing=".08em">AI — Anthropic</text>
+
+    <!-- ── Frontend components ── -->
+
+    <!-- User -->
+    <rect x="28" y="50" width="110" height="56" rx="8" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+    <text x="83"  y="74" text-anchor="middle" font-size="13" font-weight="600" fill="#1e40af">User</text>
+    <text x="83"  y="92" text-anchor="middle" font-size="10" fill="#3b82f6">Browser</text>
+
+    <!-- ChatPanel -->
+    <rect x="162" y="42" width="120" height="58" rx="8" fill="#fff" stroke="#93c5fd" stroke-width="1.5"/>
+    <text x="222" y="65" text-anchor="middle" font-size="12" font-weight="600" fill="#1e40af">ChatPanel</text>
+    <text x="222" y="81" text-anchor="middle" font-size="10" fill="#64748b">Conversation state</text>
+    <text x="222" y="94" text-anchor="middle" font-size="10" fill="#64748b">History (last 6 turns)</text>
+
+    <!-- ProductCard -->
+    <rect x="162" y="120" width="120" height="50" rx="8" fill="#fff" stroke="#93c5fd" stroke-width="1.5"/>
+    <text x="222" y="141" text-anchor="middle" font-size="12" font-weight="600" fill="#1e40af">ProductCard</text>
+    <text x="222" y="157" text-anchor="middle" font-size="10" fill="#64748b">Part display in chat</text>
+
+    <!-- API Route -->
+    <rect x="162" y="192" width="120" height="50" rx="8" fill="#fff" stroke="#93c5fd" stroke-width="1.5"/>
+    <text x="222" y="213" text-anchor="middle" font-size="12" font-weight="600" fill="#1e40af">/api/chat</text>
+    <text x="222" y="229" text-anchor="middle" font-size="10" fill="#64748b">Next.js proxy</text>
+
+    <!-- ── Backend components ── -->
+
+    <!-- FastAPI -->
+    <rect x="334" y="50" width="150" height="56" rx="8" fill="#fff" stroke="#86efac" stroke-width="1.5"/>
+    <text x="409" y="74" text-anchor="middle" font-size="12" font-weight="600" fill="#15803d">FastAPI Server</text>
+    <text x="409" y="92" text-anchor="middle" font-size="10" fill="#64748b">POST /chat</text>
+
+    <!-- Agent container -->
+    <rect x="334" y="128" width="150" height="248" rx="8" fill="#fff" stroke="#86efac" stroke-width="1.5"/>
+    <text x="409" y="150" text-anchor="middle" font-size="12" font-weight="600" fill="#15803d">PartSelectAgent</text>
+
+    <rect x="347" y="158" width="124" height="26" rx="5" fill="#dcfce7" stroke="#86efac"/>
+    <text x="409" y="175" text-anchor="middle" font-size="10" fill="#166534">Intent Detection</text>
+
+    <rect x="347" y="192" width="124" height="26" rx="5" fill="#dcfce7" stroke="#86efac"/>
+    <text x="409" y="209" text-anchor="middle" font-size="10" fill="#166534">Exact Part# Match</text>
+
+    <rect x="347" y="226" width="124" height="26" rx="5" fill="#dcfce7" stroke="#86efac"/>
+    <text x="409" y="243" text-anchor="middle" font-size="10" fill="#166534">Semantic Search</text>
+
+    <rect x="347" y="260" width="124" height="26" rx="5" fill="#dcfce7" stroke="#86efac"/>
+    <text x="409" y="277" text-anchor="middle" font-size="10" fill="#166534">Prompt Assembly</text>
+
+    <rect x="347" y="294" width="124" height="26" rx="5" fill="#dcfce7" stroke="#86efac"/>
+    <text x="409" y="311" text-anchor="middle" font-size="10" fill="#166534">LLM Client</text>
+
+    <!-- ChromaDB -->
+    <rect x="510" y="206" width="220" height="66" rx="8" fill="#fff" stroke="#86efac" stroke-width="1.5"/>
+    <text x="620" y="229" text-anchor="middle" font-size="12" font-weight="600" fill="#15803d">ChromaDB</text>
+    <text x="620" y="246" text-anchor="middle" font-size="10" fill="#64748b">Vector store · persisted to disk</text>
+    <text x="620" y="261" text-anchor="middle" font-size="10" fill="#64748b">all-MiniLM-L6-v2 embeddings</text>
+
+    <!-- CSV -->
+    <rect x="510" y="292" width="220" height="66" rx="8" fill="#fff" stroke="#86efac" stroke-width="1.5"/>
+    <text x="620" y="315" text-anchor="middle" font-size="12" font-weight="600" fill="#15803d">CSV Catalog</text>
+    <text x="620" y="332" text-anchor="middle" font-size="10" fill="#64748b">~9,600 parts · in-memory</text>
+    <text x="620" y="347" text-anchor="middle" font-size="10" fill="#64748b">parts · repairs · blog articles</text>
+
+    <!-- ── AI component ── -->
+    <rect x="768" y="136" width="186" height="106" rx="8" fill="#fff" stroke="#fde68a" stroke-width="1.5"/>
+    <text x="861" y="161" text-anchor="middle" font-size="13" font-weight="600" fill="#92400e">Claude Haiku</text>
+    <text x="861" y="178" text-anchor="middle" font-size="10" fill="#64748b">claude-haiku-4-5-20251001</text>
+    <text x="861" y="194" text-anchor="middle" font-size="10" fill="#64748b">max 600 output tokens</text>
+    <text x="861" y="210" text-anchor="middle" font-size="10" fill="#64748b">Anthropic API</text>
+    <text x="861" y="226" text-anchor="middle" font-size="10" fill="#64748b">Primary LLM backend</text>
+
+    <!-- ── Arrows ── -->
+
+    <!-- User → ChatPanel -->
+    <line x1="140" y1="77" x2="160" y2="72" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a-gray)"/>
+
+    <!-- ChatPanel → API Route (internal dashed) -->
+    <line x1="222" y1="100" x2="222" y2="190" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#a-gray)"/>
+
+    <!-- API Route → FastAPI (POST): L-shaped to avoid crossing frontend boxes -->
+    <path d="M282,217 L308,217 L308,78 L334,78" stroke="#2563eb" stroke-width="1.8" fill="none" marker-end="url(#a-blue)"/>
+
+    <!-- FastAPI → Agent -->
+    <line x1="409" y1="108" x2="409" y2="126" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a-gray)"/>
+
+    <!-- Agent → ChromaDB (from Semantic Search) -->
+    <line x1="473" y1="239" x2="508" y2="239" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a-gray)"/>
+    <text x="490" y="230" text-anchor="middle" font-size="8" fill="#94a3b8">embed</text>
+
+    <!-- Agent → CSV (from Exact Match) -->
+    <path d="M473 205 Q490 205 510 310" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#a-gray)"/>
+    <text x="502" y="256" font-size="8" fill="#94a3b8">lookup</text>
+
+    <!-- Agent → Claude: routed below CSV and ChromaDB boxes to avoid overlap -->
+    <path d="M471,307 L492,307 L492,374 L862,374 L862,244" stroke="#ea580c" stroke-width="1.8" fill="none" marker-end="url(#a-orange)"/>
+    <text x="676" y="368" text-anchor="middle" font-size="9" font-weight="600" fill="#ea580c">structured prompt</text>
+
+    <!-- Claude → response: L-shaped below all content, back to API Route -->
+    <path d="M862,244 L862,402 L222,402 L222,242" stroke="#ea580c" stroke-width="1.5" fill="none" stroke-dasharray="5 3" marker-end="url(#a-orange)"/>
+    <text x="545" y="418" text-anchor="middle" font-size="9" font-weight="600" fill="#ea580c">reply + matched products</text>
+
+    <!-- Legend -->
+    <line x1="22" y1="252" x2="52" y2="252" stroke="#2563eb" stroke-width="1.5"/>
+    <text x="57" y="256" font-size="9" fill="#64748b">request</text>
+    <line x1="110" y1="252" x2="140" y2="252" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="5 3"/>
+    <text x="145" y="256" font-size="9" fill="#64748b">response</text>
+    <line x1="200" y1="252" x2="230" y2="252" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="235" y="256" font-size="9" fill="#64748b">internal</text>
+  </svg>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     DIAGRAM 2 — DATA PIPELINE
+     ═══════════════════════════════════════════════════════════ -->
+<div class="card">
+  <div class="card-title">Data Pipeline — Ingestion &amp; Query Time</div>
+  <svg viewBox="0 0 980 450" xmlns="http://www.w3.org/2000/svg"
+       font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+    <defs>
+      <marker id="b-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+        <path d="M0 0L10 5L0 10z" fill="#94a3b8"/>
+      </marker>
+      <marker id="b-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+        <path d="M0 0L10 5L0 10z" fill="#ea580c"/>
+      </marker>
+    </defs>
+
+    <!-- ── Left panel: Ingestion ── -->
+    <rect x="8"   y="8" width="456" height="434" rx="12" fill="#f8faff" stroke="#e2e8f0" stroke-width="1.5"/>
+    <text x="236" y="32" text-anchor="middle" font-size="10" font-weight="700" fill="#475569" letter-spacing=".09em">INGESTION — FIRST RUN ONLY</text>
+
+    <!-- ── Right panel: Query ── -->
+    <rect x="476" y="8" width="496" height="434" rx="12" fill="#fff8f5" stroke="#e2e8f0" stroke-width="1.5"/>
+    <text x="724" y="32" text-anchor="middle" font-size="10" font-weight="700" fill="#475569" letter-spacing=".09em">QUERY TIME — EVERY REQUEST</text>
+
+    <!-- ════ INGESTION ════ -->
+
+    <!-- Source data -->
+    <rect x="30" y="52" width="412" height="100" rx="8" fill="#fff" stroke="#c7d2fe" stroke-width="1.5"/>
+    <text x="236" y="74" text-anchor="middle" font-size="12" font-weight="600" fill="#4338ca">Source Data</text>
+    <line x1="42" y1="82" x2="430" y2="82" stroke="#e0e7ff" stroke-width="1"/>
+
+    <rect x="50"  y="89" width="114" height="48" rx="6" fill="#eef2ff" stroke="#c7d2fe"/>
+    <text x="107" y="109" text-anchor="middle" font-size="10" font-weight="600" fill="#4338ca">all_parts.csv</text>
+    <text x="107" y="126" text-anchor="middle" font-size="10" fill="#6366f1">~9,600 parts</text>
+
+    <rect x="179" y="89" width="114" height="48" rx="6" fill="#eef2ff" stroke="#c7d2fe"/>
+    <text x="236" y="109" text-anchor="middle" font-size="10" font-weight="600" fill="#4338ca">all_repairs.csv</text>
+    <text x="236" y="126" text-anchor="middle" font-size="10" fill="#6366f1">21 repair guides</text>
+
+    <rect x="308" y="89" width="114" height="48" rx="6" fill="#eef2ff" stroke="#c7d2fe"/>
+    <text x="365" y="109" text-anchor="middle" font-size="10" font-weight="600" fill="#4338ca">blogs.csv</text>
+    <text x="365" y="126" text-anchor="middle" font-size="10" fill="#6366f1">215 articles</text>
+
+    <!-- Arrow -->
+    <line x1="236" y1="154" x2="236" y2="182" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#b-gray)"/>
+    <text x="252" y="172" font-size="9" fill="#94a3b8">parse &amp; format</text>
+
+    <!-- ingest_csv.py -->
+    <rect x="30" y="184" width="412" height="58" rx="8" fill="#fff" stroke="#c7d2fe" stroke-width="1.5"/>
+    <text x="236" y="208" text-anchor="middle" font-size="12" font-weight="600" fill="#4338ca">ingest_csv.py</text>
+    <text x="236" y="228" text-anchor="middle" font-size="10" fill="#64748b">Load rows · normalise fields · deduplicate · build document text</text>
+
+    <!-- Arrow -->
+    <line x1="236" y1="244" x2="236" y2="272" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#b-gray)"/>
+    <text x="252" y="262" font-size="9" fill="#94a3b8">generate embeddings</text>
+
+    <!-- Sentence Transformer -->
+    <rect x="30" y="274" width="412" height="58" rx="8" fill="#fff" stroke="#c7d2fe" stroke-width="1.5"/>
+    <text x="236" y="298" text-anchor="middle" font-size="12" font-weight="600" fill="#4338ca">SentenceTransformer</text>
+    <text x="236" y="318" text-anchor="middle" font-size="10" fill="#64748b">all-MiniLM-L6-v2 · 384-dimensional dense vectors</text>
+
+    <!-- Arrow -->
+    <line x1="236" y1="334" x2="236" y2="362" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#b-gray)"/>
+    <text x="252" y="352" font-size="9" fill="#94a3b8">persist to disk</text>
+
+    <!-- ChromaDB -->
+    <rect x="30" y="364" width="412" height="58" rx="8" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+    <text x="236" y="388" text-anchor="middle" font-size="12" font-weight="600" fill="#15803d">ChromaDB — Vector Store</text>
+    <text x="236" y="408" text-anchor="middle" font-size="10" fill="#166534">backend/chroma_db/ · loaded from disk on all subsequent starts</text>
+
+    <!-- ════ QUERY TIME ════ -->
+
+    <!-- User query -->
+    <rect x="604" y="52" width="240" height="50" rx="8" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+    <text x="724" y="74" text-anchor="middle" font-size="12" font-weight="600" fill="#1e40af">User Query</text>
+    <text x="724" y="91" text-anchor="middle" font-size="10" fill="#3b82f6">"Install part PS11752778"</text>
+
+    <!-- Down to fork -->
+    <line x1="724" y1="103" x2="724" y2="126" stroke="#94a3b8" stroke-width="1.5"/>
+
+    <!-- Fork -->
+    <line x1="590" y1="126" x2="858" y2="126" stroke="#94a3b8" stroke-width="1.5"/>
+    <line x1="590" y1="126" x2="590" y2="148" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#b-gray)"/>
+    <line x1="858" y1="126" x2="858" y2="148" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#b-gray)"/>
+    <text x="660" y="122" text-anchor="middle" font-size="9" fill="#94a3b8">exact match</text>
+    <text x="800" y="122" text-anchor="middle" font-size="9" fill="#94a3b8">semantic</text>
+
+    <!-- Exact match -->
+    <rect x="496" y="150" width="188" height="64" rx="8" fill="#fff" stroke="#86efac" stroke-width="1.5"/>
+    <text x="590" y="173" text-anchor="middle" font-size="11" font-weight="600" fill="#15803d">Exact Part# Match</text>
+    <text x="590" y="190" text-anchor="middle" font-size="10" fill="#64748b">CSV in-memory scan</text>
+    <text x="590" y="205" text-anchor="middle" font-size="10" fill="#64748b">matched products</text>
+
+    <!-- Vector search -->
+    <rect x="764" y="150" width="188" height="64" rx="8" fill="#fff" stroke="#86efac" stroke-width="1.5"/>
+    <text x="858" y="173" text-anchor="middle" font-size="11" font-weight="600" fill="#15803d">Semantic Search</text>
+    <text x="858" y="190" text-anchor="middle" font-size="10" fill="#64748b">embed query → ChromaDB</text>
+    <text x="858" y="205" text-anchor="middle" font-size="10" fill="#64748b">top 5 results</text>
+
+    <!-- Merge -->
+    <line x1="590" y1="216" x2="590" y2="240" stroke="#94a3b8" stroke-width="1.5"/>
+    <line x1="858" y1="216" x2="858" y2="240" stroke="#94a3b8" stroke-width="1.5"/>
+    <line x1="590" y1="240" x2="858" y2="240" stroke="#94a3b8" stroke-width="1.5"/>
+    <line x1="724" y1="240" x2="724" y2="262" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#b-gray)"/>
+
+    <!-- Prompt Assembly -->
+    <rect x="510" y="264" width="428" height="78" rx="8" fill="#fff" stroke="#fde68a" stroke-width="1.5"/>
+    <text x="724" y="288" text-anchor="middle" font-size="12" font-weight="600" fill="#92400e">Prompt Assembly</text>
+    <text x="724" y="306" text-anchor="middle" font-size="10" fill="#64748b">Matched parts · vector results · intent instructions</text>
+    <text x="724" y="322" text-anchor="middle" font-size="10" fill="#64748b">Conversation history (last 4 turns) · scoped system role</text>
+
+    <!-- Arrow to Claude -->
+    <line x1="724" y1="344" x2="724" y2="368" stroke="#ea580c" stroke-width="1.8" marker-end="url(#b-orange)"/>
+    <text x="742" y="360" font-size="9" font-weight="600" fill="#ea580c">prompt</text>
+
+    <!-- Claude response -->
+    <rect x="510" y="370" width="428" height="58" rx="8" fill="#fffbeb" stroke="#fde68a" stroke-width="1.5"/>
+    <text x="724" y="394" text-anchor="middle" font-size="12" font-weight="600" fill="#92400e">Claude Haiku</text>
+    <text x="724" y="412" text-anchor="middle" font-size="10" fill="#64748b">Natural language reply · product card data · up to 600 tokens</text>
+  </svg>
+</div>
+
+</body>
+</html>

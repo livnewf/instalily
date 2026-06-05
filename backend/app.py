@@ -1,7 +1,12 @@
 import os
+import logging
 from typing import List
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+
+load_dotenv(override=True)
+logging.basicConfig(level=logging.INFO)
 
 from .vector_store import VectorStore
 from .agent import PartSelectAgent
@@ -34,6 +39,7 @@ def chat(request: ChatRequest):
         result = agent.generate_response(request.query, history=history)
         return result
     except Exception as exc:
+        logging.exception('Error in /chat endpoint')
         raise HTTPException(status_code=500, detail=str(exc))
 
 

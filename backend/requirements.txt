@@ -2,8 +2,6 @@ anthropic
 fastapi
 uvicorn[standard]
 llm
-transformers
-einops
 sentence-transformers
 chromadb
 openai
