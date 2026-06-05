@@ -6,7 +6,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv(override=True)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
+for _noisy in ('sentence_transformers', 'chromadb', 'httpx', 'httpcore', 'transformers'):
+    logging.getLogger(_noisy).setLevel(logging.WARNING)
 
 from .vector_store import VectorStore
 from .agent import PartSelectAgent
